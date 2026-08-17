@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ritesh Pandey — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-desk:#15171a;
+    --bg-desk-alt:#1b1e22;
+    --paper:#f5f1e6;
+    --paper-dim:#eae5d6;
+    --ink:#201c16;
+    --ink-soft:#54503f;
+    --cream:#ece8dd;
+    --muted:#9b968c;
+    --line:rgba(236,232,221,0.14);
+    --line-strong:rgba(236,232,221,0.28);
+
+    --c-writing:#c9722e;
+    --c-data:#2f8f86;
+    --c-design:#b24c79;
+    --c-marketing:#4c63b6;
+
+    --font-display:'Fraunces', serif;
+    --font-body:'Work Sans', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg-desk);
+    color:var(--cream);
+    font-family:var(--font-body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+  ::selection{background:var(--c-writing);color:#15171a;}
+
+  a:focus-visible, button:focus-visible, .chip:focus-visible{
+    outline:2px solid var(--c-data);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    backdrop-filter:blur(10px);
+    background:rgba(21,23,26,0.82);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 28px;
+    max-width:1080px;
+    margin:0 auto;
+  }
+  .nav-name{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.05rem;
+    letter-spacing:0.02em;
+    text-decoration:none;
+  }
+  .nav-links{
+    display:flex;
+    gap:22px;
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+  }
+  .nav-links a{text-decoration:none;color:var(--muted);transition:color .15s;}
+  .nav-links a:hover{color:var(--cream);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:96px 0 80px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-eyebrow{
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 18px;
+  }
+  .hero h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(2.4rem, 6vw, 4.2rem);
+    line-height:1.04;
+    margin:0 0 22px;
+    max-width:14ch;
+  }
+  .hero h1 em{
+    font-style:italic;
+    font-weight:300;
+    color:var(--muted);
+  }
+  .hero p.lede{
+    font-size:1.1rem;
+    color:var(--cream);
+    max-width:52ch;
+    margin:0 0 34px;
+    opacity:0.88;
+  }
+  .hero-tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:40px;
+  }
+  .tab{
+    font-family:var(--font-mono);
+    font-size:0.74rem;
+    letter-spacing:0.03em;
+    padding:6px 12px;
+    border-radius:3px 3px 0 0;
+    color:#15171a;
+    font-weight:500;
+    transform:translateY(0);
+    transition:transform .2s ease;
+  }
+  .tab:hover{transform:translateY(-3px);}
+  .hero-cta{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--font-mono);
+    font-size:0.82rem;
+    text-decoration:none;
+    padding:12px 20px;
+    border-radius:2px;
+    border:1px solid var(--line-strong);
+    transition:all .15s ease;
+  }
+  .btn-primary{
+    background:var(--paper);
+    color:var(--ink);
+    border-color:var(--paper);
+  }
+  .btn-primary:hover{background:var(--cream);}
+  .btn-ghost{color:var(--cream);}
+  .btn-ghost:hover{border-color:var(--cream);}
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section{padding:70px 0;border-top:1px solid var(--line);}
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:38px;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .section-head h2{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.9rem;
+    margin:0;
+  }
+  .section-num{
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    color:var(--muted);
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:40px;
+  }
+  .about-grid p{color:var(--cream);opacity:0.85;font-size:1.02rem;}
+  .fact-card{
+    background:var(--bg-desk-alt);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:22px 24px;
+  }
+  .fact-row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:11px 0;
+    border-bottom:1px solid var(--line);
+    font-size:0.92rem;
+  }
+  .fact-row:last-child{border-bottom:none;}
+  .fact-label{
+    font-family:var(--font-mono);
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--muted);
+  }
+
+  /* ---------- SKILLS ---------- */
+  .skill-groups{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:18px;
+  }
+  .skill-card{
+    background:var(--bg-desk-alt);
+    border:1px solid var(--line);
+    border-top:3px solid var(--tab-color, var(--c-writing));
+    border-radius:3px;
+    padding:20px 20px 22px;
+  }
+  .skill-card h3{
+    font-family:var(--font-mono);
+    text-transform:uppercase;
+    font-size:0.8rem;
+    letter-spacing:0.05em;
+    margin:0 0 14px;
+    color:var(--tab-color, var(--c-writing));
+  }
+  .skill-card ul{list-style:none;margin:0;padding:0;}
+  .skill-card li{
+    font-size:0.92rem;
+    padding:5px 0;
+    color:var(--cream);
+    opacity:0.86;
+  }
+
+  /* ---------- FILTER ---------- */
+  .filter-bar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:34px;
+  }
+  .chip{
+    font-family:var(--font-mono);
+    font-size:0.76rem;
+    letter-spacing:0.02em;
+    padding:8px 15px;
+    border-radius:20px;
+    border:1px solid var(--line-strong);
+    background:transparent;
+    color:var(--cream);
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .chip[data-active="true"]{
+    background:var(--chip-color, var(--c-writing));
+    border-color:var(--chip-color, var(--c-writing));
+    color:#15171a;
+    font-weight:500;
+  }
+  .chip:hover{border-color:var(--cream);}
+
+  /* ---------- PROJECT CARDS ---------- */
+  .project-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(300px,1fr));
+    gap:22px;
+  }
+  .pcard{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:3px;
+    padding:24px 24px 22px;
+    position:relative;
+    border-top:6px solid var(--card-color, var(--c-writing));
+    box-shadow:0 1px 0 rgba(0,0,0,0.2);
+    transition:transform .25s ease, box-shadow .25s ease;
+    opacity:0;
+    transform:translateY(14px) rotate(-0.4deg);
+    animation:settle .5s ease forwards;
+  }
+  @keyframes settle{
+    to{opacity:1; transform:translateY(0) rotate(0deg);}
+  }
+  .pcard:hover{
+    transform:translateY(-4px);
+    box-shadow:0 14px 26px rgba(0,0,0,0.35);
+  }
+  .pcard .ptag{
+    font-family:var(--font-mono);
+    font-size:0.68rem;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--card-color, var(--c-writing));
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  .pcard h3{
+    font-family:var(--font-display);
+    font-size:1.24rem;
+    font-weight:600;
+    margin:0 0 10px;
+    line-height:1.25;
+  }
+  .pcard p{
+    font-size:0.92rem;
+    color:var(--ink-soft);
+    margin:0 0 16px;
+  }
+  .pcard .ptags-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:14px;
+  }
+  .pcard .mini-tag{
+    font-family:var(--font-mono);
+    font-size:0.65rem;
+    padding:3px 8px;
+    border-radius:10px;
+    background:rgba(32,28,22,0.08);
+    color:var(--ink-soft);
+  }
+  .pcard a.plink{
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    text-decoration:none;
+    color:var(--ink);
+    border-bottom:1px solid var(--ink);
+    padding-bottom:1px;
+  }
+
+  /* ---------- WRITING LEDGER ---------- */
+  .ledger{
+    border-top:1px solid var(--line-strong);
+  }
+  .ledger-row{
+    display:grid;
+    grid-template-columns:110px 1fr auto;
+    gap:18px;
+    align-items:baseline;
+    padding:18px 0;
+    border-bottom:1px solid var(--line);
+    text-decoration:none;
+    color:inherit;
+  }
+  .ledger-row:hover .ledger-title{color:var(--c-data);}
+  .ledger-date{
+    font-family:var(--font-mono);
+    font-size:0.74rem;
+    color:var(--muted);
+  }
+  .ledger-title{
+    font-family:var(--font-display);
+    font-size:1.05rem;
+    font-weight:500;
+    transition:color .15s;
+  }
+  .ledger-tag{
+    font-family:var(--font-mono);
+    font-size:0.68rem;
+    text-transform:uppercase;
+    color:var(--muted);
+    align-self:center;
+  }
+  .ledger-note{
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    color:var(--muted);
+    margin-top:10px;
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact-card{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:4px;
+    padding:36px 34px;
+    display:grid;
+    grid-template-columns:1.2fr 1fr;
+    gap:30px;
+  }
+  .contact-card h2{
+    font-family:var(--font-display);
+    font-size:1.9rem;
+    margin:0 0 12px;
+  }
+  .contact-card p{color:var(--ink-soft);margin:0 0 22px;max-width:38ch;}
+  .contact-links{display:flex;flex-direction:column;gap:12px;}
+  .contact-links a{
+    font-family:var(--font-mono);
+    font-size:0.9rem;
+    text-decoration:none;
+    color:var(--ink);
+    padding-bottom:6px;
+    border-bottom:1px solid rgba(32,28,22,0.18);
+    display:flex;
+    justify-content:space-between;
+  }
+  .contact-links a:hover{border-color:var(--ink);}
+
+  footer{
+    padding:34px 0 60px;
+    text-align:center;
+    font-family:var(--font-mono);
+    font-size:0.75rem;
+    color:var(--muted);
+  }
+
+  @media (max-width:720px){
+    .about-grid{grid-template-columns:1fr;}
+    .contact-card{grid-template-columns:1fr;padding:28px 22px;}
+    .ledger-row{grid-template-columns:1fr;gap:4px;}
+    .nav-links{gap:14px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important; scroll-behavior:auto !important;}
+    .pcard{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="nav-name" href="#top">Ritesh Pandey</a>
+    <nav class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#writing">Writing</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero wrap">
+    <p class="hero-eyebrow">New Delhi · Student &amp; Independent Builder</p>
+    <h1>I write, analyze,<br>and design — <em>often<br>in the same afternoon.</em></h1>
+    <p class="lede">I move between content, data and design because most real problems don't stay inside one lane. Currently studying Polymer Science (Delhi University) and Computer Applications (IGNOU) side by side, and using the gap between them to build things.</p>
+    <div class="hero-tabs" id="hero-tabs"></div>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#work">View the work</a>
+      <a class="btn btn-ghost" id="resume-btn" href="#" target="_blank" rel="noopener">Download résumé →</a>
+    </div>
+  </section>
+
+  <section class="section wrap" id="about">
+    <div class="section-head">
+      <h2>About</h2>
+      <span class="section-num">01</span>
+    </div>
+    <div class="about-grid">
+      <div>
+        <p>I'm a college student who ended up doing four jobs at once by accident: writing up research clearly, pulling structure out of messy data, designing the interface it all lives in, and figuring out how to describe it so someone else cares. I don't have a studio or a team — just a laptop, a set of real course problems, and a habit of finishing what I start.</p>
+        <p>Outside of coursework, I read philosophy — mostly for the way it trains patience and structured thinking, which turns out to be useful for debugging code and untangling a messy spreadsheet in equal measure.</p>
+      </div>
+      <div class="fact-card">
+        <div class="fact-row"><span class="fact-label">Based in</span><span>New Delhi, India</span></div>
+        <div class="fact-row"><span class="fact-label">Studying</span><span>BSc (Hons) Polymer Science, DU</span></div>
+        <div class="fact-row"><span class="fact-label">Also studying</span><span>BCA, IGNOU</span></div>
+        <div class="fact-row"><span class="fact-label">Focus areas</span><span>Writing · Data · Design</span></div>
+        <div class="fact-row"><span class="fact-label">Currently learning</span><span>Python, SQL, Power BI</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="skills">
+    <div class="section-head">
+      <h2>Skills</h2>
+      <span class="section-num">02</span>
+    </div>
+    <div class="skill-groups" id="skill-groups"></div>
+  </section>
+
+  <section class="section wrap" id="work">
+    <div class="section-head">
+      <h2>Selected work</h2>
+      <span class="section-num">03</span>
+    </div>
+    <div class="filter-bar" id="filter-bar"></div>
+    <div class="project-grid" id="project-grid"></div>
+  </section>
+
+  <section class="section wrap" id="writing">
+    <div class="section-head">
+      <h2>Writing</h2>
+      <span class="section-num">04</span>
+    </div>
+    <div class="ledger" id="ledger"></div>
+    <p class="ledger-note">↑ Sample entries — swap these for your real posts. See the EDIT ME guide inside the file.</p>
+  </section>
+
+  <section class="section wrap" id="contact">
+    <div class="section-head">
+      <h2>Get in touch</h2>
+      <span class="section-num">05</span>
+    </div>
+    <div class="contact-card">
+      <div>
+        <h2>Have something<br>worth building?</h2>
+        <p>Open to internships, freelance writing, data or design work, and anything that needs someone who can do more than one part of it.</p>
+      </div>
+      <div class="contact-links" id="contact-links"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Built by hand, not a template · Last updated <span id="footer-date"></span>
+</footer>
+
+<script>
+/* ============================================================
+   EDIT ME — everything below is the content of the site.
+   You do NOT need to touch any CSS or HTML above this line.
+
+   HOW TO ADD A NEW PROJECT
+   -------------------------
+   Copy one block inside PROJECTS (the { ... } part), paste it
+   as a new entry, and change the text. "tags" controls both
+   the colour of the card and which filter chips it shows under.
+   Valid tags: "Writing", "Data", "Design", "Marketing"
+   (first tag in the list = the card's accent colour)
+
+   HOW TO ADD A NEW BLOG / WRITING SAMPLE
+   -------------------------
+   Same idea — copy a block inside BLOGS and edit it.
+
+   HOW TO CHANGE LINKS (resume, LinkedIn, email)
+   -------------------------
+   Edit the LINKS object near the bottom.
+   ============================================================ */
+
+const TAG_COLORS = {
+  Writing:    "var(--c-writing)",
+  Data:       "var(--c-data)",
+  Design:     "var(--c-design)",
+  Marketing:  "var(--c-marketing)"
+};
+
+const PROJECTS = [
+  {
+    title: "Bullet Journal, rebuilt as a web app",
+    tags: ["Design", "Data"],
+    description: "A React + Tailwind app that turns raw text or a photo of a handwritten page into a structured digital journal — a mind map, a searchable database table, and a visual summary panel, all generated from the same input.",
+    link: "#",
+    linkLabel: "View project"
+  },
+  {
+    title: "SwipeHire — a swipe-to-match job app",
+    tags: ["Design", "Marketing"],
+    description: "A Tinder-style prototype for student job hunting: swipe gestures, a two-layer recommendation engine, flip-to-reveal detail cards, and a matches panel. Built as a self-contained demo to test the interaction model end to end.",
+    link: "#",
+    linkLabel: "View project"
+  },
+  {
+    title: "Predicting Tg in bio-based copolymers",
+    tags: ["Writing", "Data"],
+    description: "A practice research paper applying ML / QSPR methods to predict glass transition temperature in bio-based copolymers — built by synthesising real published literature rather than inventing results, to practise the discipline of technical writing.",
+    link: "#",
+    linkLabel: "Read paper"
+  },
+  {
+    title: "JavaScript, taught from first principles",
+    tags: ["Writing", "Data"],
+    description: "A single-file interactive textbook covering closures, the event loop, promises, the prototype chain and ES6 classes — written to explain the parts of JS that most tutorials wave their hands at.",
+    link: "#",
+    linkLabel: "View project"
+  },
+  {
+    title: "Exam-ready study guides, with diagrams",
+    tags: ["Writing"],
+    description: "A set of dense, PYQ-mapped study guides for polymer testing, waste management, computer networks, Java and C++ — built with original SVG diagrams and worked examples, not copy-pasted notes.",
+    link: "#",
+    linkLabel: "View project"
+  }
+];
+
+const BLOGS = [
+  {
+    date: "2026",
+    title: "SAMPLE — Replace with your first real post title",
+    tag: "Writing",
+    link: "#"
+  },
+  {
+    date: "2026",
+    title: "SAMPLE — e.g. 'What building a Bullet Journal app taught me about data'",
+    tag: "Data",
+    link: "#"
+  }
+];
+
+const LINKS = {
+  email: "riteshji289@gmail.com",
+  linkedin: "https://www.linkedin.com/in/ritesh-pandey-46a64528b",
+  resume: "https://drive.google.com/file/d/1kOpVBUoQWNo_urDhb9seMtksaDHCuPRH/view?usp=drivesdk",
+  location: "New Delhi, India"
+};
+
+const SKILLS = [
+  { group: "Writing", items: ["Technical & research writing", "Study guides & explainers", "Editing for clarity"] },
+  { group: "Data", items: ["Python (learning)", "SQL (learning)", "Power BI (learning)", "QSPR / literature synthesis"] },
+  { group: "Design", items: ["React + Tailwind CSS", "UI prototyping", "Interaction design"] },
+  { group: "Marketing", items: ["Positioning & messaging", "Portfolio / personal branding", "Add your specifics here"] }
+];
+
+/* ---------------- rendering (no need to edit below) ---------------- */
+
+function el(html){
+  const t = document.createElement('template');
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+}
+
+// hero tabs
+const heroTabs = document.getElementById('hero-tabs');
+Object.keys(TAG_COLORS).forEach(tag=>{
+  heroTabs.appendChild(el(`<span class="tab" style="background:${TAG_COLORS[tag]}">${tag}</span>`));
+});
+
+// skills
+const skillWrap = document.getElementById('skill-groups');
+SKILLS.forEach(s=>{
+  const card = el(`<div class="skill-card" style="--tab-color:${TAG_COLORS[s.group] || 'var(--c-writing)'}">
+    <h3>${s.group}</h3>
+    <ul>${s.items.map(i=>`<li>${i}</li>`).join('')}</ul>
+  </div>`);
+  skillWrap.appendChild(card);
+});
+
+// filter chips
+const allTags = ["All", ...Object.keys(TAG_COLORS)];
+const filterBar = document.getElementById('filter-bar');
+let activeTag = "All";
+
+function renderProjects(){
+  const grid = document.getElementById('project-grid');
+  grid.innerHTML = "";
+  PROJECTS
+    .filter(p => activeTag === "All" || p.tags.includes(activeTag))
+    .forEach((p,i)=>{
+      const color = TAG_COLORS[p.tags[0]] || 'var(--c-writing)';
+      const card = el(`<article class="pcard" style="--card-color:${color}; animation-delay:${i*0.05}s">
+        <div class="ptag">${p.tags[0]}</div>
+        <h3>${p.title}</h3>
+        <p>${p.description}</p>
+        <div class="ptags-row">${p.tags.map(t=>`<span class="mini-tag">${t}</span>`).join('')}</div>
+        <a class="plink" href="${p.link}" target="_blank" rel="noopener">${p.linkLabel} →</a>
+      </article>`);
+      grid.appendChild(card);
+    });
+}
+
+allTags.forEach(tag=>{
+  const chip = el(`<button class="chip" style="--chip-color:${TAG_COLORS[tag] || 'var(--cream)'}" data-active="${tag==='All'}">${tag}</button>`);
+  chip.addEventListener('click', ()=>{
+    activeTag = tag;
+    document.querySelectorAll('.chip').forEach(c=>c.setAttribute('data-active', c.textContent===tag));
+    renderProjects();
+  });
+  filterBar.appendChild(chip);
+});
+renderProjects();
+
+// writing ledger
+const ledger = document.getElementById('ledger');
+BLOGS.forEach(b=>{
+  ledger.appendChild(el(`<a class="ledger-row" href="${b.link}" target="_blank" rel="noopener">
+    <span class="ledger-date">${b.date}</span>
+    <span class="ledger-title">${b.title}</span>
+    <span class="ledger-tag">${b.tag}</span>
+  </a>`));
+});
+
+// contact + resume + nav
+document.getElementById('resume-btn').href = LINKS.resume;
+const contactLinks = document.getElementById('contact-links');
+contactLinks.appendChild(el(`<a href="mailto:${LINKS.email}"><span>Email</span><span>${LINKS.email}</span></a>`));
+contactLinks.appendChild(el(`<a href="${LINKS.linkedin}" target="_blank" rel="noopener"><span>LinkedIn</span><span>Profile →</span></a>`));
+contactLinks.appendChild(el(`<a href="${LINKS.resume}" target="_blank" rel="noopener"><span>Résumé</span><span>Download →</span></a>`));
+contactLinks.appendChild(el(`<a href="#"><span>Location</span><span>${LINKS.location}</span></a>`));
+
+document.getElementById('footer-date').textContent = new Date().toLocaleDateString('en-IN', {month:'long', year:'numeric'});
+</script>
+
+</body>
+</html>

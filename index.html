@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindSpace — Mental Wellness Journal</title>
+<meta name="description" content="A private, local-first journal for daily reflection, mood tracking, and calm.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ================= LANDING PAGE ================= -->
+<div id="landing" class="landing">
+
+  <header class="landing-nav">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">MindSpace</span>
+    </div>
+    <button class="btn btn-ghost" id="landing-theme-toggle" aria-label="Toggle dark mode">
+      <span class="theme-icon">◐</span>
+    </button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">A private space to breathe, think, and reflect</p>
+      <h1 class="hero-title">Some days<br>need a quiet place<br>to land.</h1>
+      <p class="hero-sub">MindSpace is a self-reflection journal — a few quiet minutes to name how you feel, track it over time, and build a habit that sticks. Everything stays on your device.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="enter-app-btn">Start reflecting</button>
+        <a href="#how-it-works" class="btn btn-text">How it works ↓</a>
+      </div>
+      <p class="hero-privacy">🔒 Nothing you write ever leaves this browser.</p>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="breath-rings">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="ring-core"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="narrative" id="how-it-works">
+    <div class="narrative-item">
+      <span class="narrative-label">The problem</span>
+      <h2>Reflection rarely happens on its own.</h2>
+      <p>Most people mean to check in with themselves — and most days, it just doesn't happen. Feelings pile up unexamined, and the habit that would help the most is the one that keeps slipping.</p>
+    </div>
+    <div class="narrative-item">
+      <span class="narrative-label">The solution</span>
+      <h2>A small, honest ritual.</h2>
+      <p>MindSpace gives you one calm place to write, name a mood, and see it laid out over time — with guided prompts when you don't know where to start, and a breathing exercise when you just need a minute.</p>
+    </div>
+    <div class="narrative-item">
+      <span class="narrative-label">The impact</span>
+      <h2>Awareness, without exposure.</h2>
+      <p>Every entry stays on your device, in your browser's storage. Nothing is uploaded, tracked, or shared — so the only cost of building the habit is a few honest minutes.</p>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <p>MindSpace is a self-reflection tool and is not a substitute for professional mental-health care.</p>
+  </footer>
+</div>
+
+<!-- ================= APP SHELL ================= -->
+<div id="app" class="app hidden">
+
+  <aside class="sidebar">
+    <div class="brand" id="app-brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">MindSpace</span>
+    </div>
+
+    <nav class="side-nav" aria-label="Main">
+      <button class="nav-item active" data-view="journal">
+        <span class="nav-icon">✎</span><span>Journal</span>
+      </button>
+      <button class="nav-item" data-view="mood">
+        <span class="nav-icon">◔</span><span>Mood</span>
+      </button>
+      <button class="nav-item" data-view="dashboard">
+        <span class="nav-icon">▦</span><span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-view="breathe">
+        <span class="nav-icon">◯</span><span>Breathe</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn btn-ghost btn-small" id="app-theme-toggle">
+        <span class="theme-icon">◐</span> <span id="theme-label">Dark mode</span>
+      </button>
+      <button class="btn btn-ghost btn-small" id="privacy-btn">🔒 Privacy</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- Mobile top bar -->
+    <div class="mobile-topbar">
+      <span class="brand-name">MindSpace</span>
+      <button class="btn btn-ghost btn-small" id="mobile-theme-toggle" aria-label="Toggle dark mode">◐</button>
+    </div>
+
+    <!-- ---------- JOURNAL VIEW ---------- -->
+    <section class="view active" id="view-journal">
+      <div class="view-header">
+        <h1>Daily Journal</h1>
+        <p class="view-sub" id="today-date-label"></p>
+      </div>
+
+      <div class="card journal-card">
+        <label class="journal-main-label" for="journal-main">How are you feeling today?</label>
+        <textarea id="journal-main" class="journal-textarea" rows="5" placeholder="Write whatever comes to mind — there's no wrong way to do this."></textarea>
+
+        <div class="mood-picker">
+          <span class="mood-picker-label">Today's mood</span>
+          <div class="mood-options" id="mood-options" role="radiogroup" aria-label="Select your mood">
+            <button type="button" class="mood-option" data-mood="great" role="radio" aria-checked="false">
+              <span class="mood-emoji">😄</span><span class="mood-text">Great</span>
+            </button>
+            <button type="button" class="mood-option" data-mood="good" role="radio" aria-checked="false">
+              <span class="mood-emoji">🙂</span><span class="mood-text">Good</span>
+            </button>
+            <button type="button" class="mood-option" data-mood="okay" role="radio" aria-checked="false">
+              <span class="mood-emoji">😐</span><span class="mood-text">Okay</span>
+            </button>
+            <button type="button" class="mood-option" data-mood="low" role="radio" aria-checked="false">
+              <span class="mood-emoji">😔</span><span class="mood-text">Low</span>
+            </button>
+            <button type="button" class="mood-option" data-mood="difficult" role="radio" aria-checked="false">
+              <span class="mood-emoji">😣</span><span class="mood-text">Difficult</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="prompts-toggle" id="prompts-toggle" type="button" aria-expanded="false">
+          <span>+ Add guided prompts</span>
+        </button>
+
+        <div class="optional-prompts" id="optional-prompts" hidden>
+          <div class="prompt-field">
+            <label for="prompt-happy">What made you happy today?</label>
+            <textarea id="prompt-happy" rows="2"></textarea>
+          </div>
+          <div class="prompt-field">
+            <label for="prompt-difficult">What was difficult today?</label>
+            <textarea id="prompt-difficult" rows="2"></textarea>
+          </div>
+          <div class="prompt-field">
+            <label for="prompt-grateful">What are you grateful for?</label>
+            <textarea id="prompt-grateful" rows="2"></textarea>
+          </div>
+          <div class="prompt-field">
+            <label for="prompt-improve">What is one thing you want to improve tomorrow?</label>
+            <textarea id="prompt-improve" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="journal-actions">
+          <span class="save-hint" id="save-hint"></span>
+          <button class="btn btn-primary" id="save-entry-btn">Save entry</button>
+        </div>
+      </div>
+
+      <!-- Reflection / crisis message shown after save -->
+      <div class="card reflection-card hidden" id="reflection-card">
+        <p id="reflection-text"></p>
+      </div>
+
+      <div class="card crisis-card hidden" id="crisis-card">
+        <h3>You don't have to carry this alone</h3>
+        <p>It sounds like things might feel really heavy right now. MindSpace can't offer professional support, but reaching out to someone can help.</p>
+        <ul>
+          <li>Talk to a friend, family member, or anyone you trust.</li>
+          <li>In India: <strong>KIRAN helpline — 1800-599-0019</strong> (toll-free, 24/7).</li>
+          <li>In the US: call or text <strong>988</strong> (Suicide &amp; Crisis Lifeline).</li>
+          <li>Elsewhere: search "crisis helpline" plus your country, or contact local emergency services.</li>
+          <li>If you're in immediate danger, please contact emergency services right now.</li>
+        </ul>
+        <button class="btn btn-secondary btn-small" id="dismiss-crisis-btn">I've seen this</button>
+      </div>
+
+      <div class="card entries-card">
+        <div class="entries-header">
+          <h2>Past entries</h2>
+          <span class="entries-count" id="entries-count"></span>
+        </div>
+        <div class="entries-list" id="entries-list"></div>
+      </div>
+    </section>
+
+    <!-- ---------- MOOD VIEW ---------- -->
+    <section class="view" id="view-mood">
+      <div class="view-header">
+        <h1>Mood Tracker</h1>
+        <p class="view-sub">A look at how your days have felt.</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Weekly mood trend</h2>
+        <div id="mood-chart-weekly" class="chart-wrap"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Mood history</h2>
+        <div id="mood-history-list" class="mood-history-list"></div>
+      </div>
+    </section>
+
+    <!-- ---------- DASHBOARD VIEW ---------- -->
+    <section class="view" id="view-dashboard">
+      <div class="view-header">
+        <h1>Reflection Dashboard</h1>
+        <p class="view-sub">Your reflection habit, at a glance.</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="card stat-card">
+          <span class="stat-label">Total entries</span>
+          <span class="stat-value" id="stat-total">0</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Current streak</span>
+          <span class="stat-value" id="stat-streak">0<span class="stat-unit"> days</span></span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Most common mood</span>
+          <span class="stat-value stat-emoji" id="stat-common-mood">—</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">This week</h2>
+        <div id="mood-chart-dashboard" class="chart-wrap"></div>
+      </div>
+
+      <div class="card today-card">
+        <h2 class="card-title">Your reflection for today</h2>
+        <div id="today-reflection"></div>
+      </div>
+
+      <div class="card demo-card">
+        <h2 class="card-title">Demo data</h2>
+        <p class="muted">Load a few labelled sample entries to explore MindSpace, or clear everything you've written.</p>
+        <div class="demo-actions">
+          <button class="btn btn-secondary btn-small" id="load-demo-btn">Load demo entries</button>
+          <button class="btn btn-danger btn-small" id="delete-all-btn">Delete all journal data</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- BREATHE VIEW ---------- -->
+    <section class="view" id="view-breathe">
+      <div class="view-header">
+        <h1>Breathing Exercise</h1>
+        <p class="view-sub">Sixty seconds. Follow the circle.</p>
+      </div>
+
+      <div class="card breathe-card">
+        <div class="breathe-visual">
+          <div class="breathe-circle" id="breathe-circle">
+            <span class="breathe-instruction" id="breathe-instruction">Ready</span>
+          </div>
+        </div>
+        <div class="breathe-timer" id="breathe-timer">60s</div>
+        <div class="breathe-controls">
+          <button class="btn btn-primary" id="breathe-start-btn">Start breathing exercise</button>
+          <button class="btn btn-ghost hidden" id="breathe-stop-btn">Stop</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav" aria-label="Main">
+    <button class="nav-item active" data-view="journal">
+      <span class="nav-icon">✎</span><span>Journal</span>
+    </button>
+    <button class="nav-item" data-view="mood">
+      <span class="nav-icon">◔</span><span>Mood</span>
+    </button>
+    <button class="nav-item" data-view="dashboard">
+      <span class="nav-icon">▦</span><span>Dashboard</span>
+    </button>
+    <button class="nav-item" data-view="breathe">
+      <span class="nav-icon">◯</span><span>Breathe</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ================= PRIVACY MODAL ================= -->
+<div class="modal-overlay hidden" id="privacy-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="privacy-modal-title">
+    <h2 id="privacy-modal-title">Your privacy</h2>
+    <p><strong>Your journal entries stay on this device and are not sent to a server.</strong></p>
+    <p class="muted">MindSpace has no backend, no account, and no analytics. Everything you write is stored using your browser's local storage, on this device only. Clearing your browser data, or using a different device or browser, will not carry entries over. You can permanently delete everything from the Dashboard at any time.</p>
+    <button class="btn btn-primary" id="close-privacy-btn">Got it</button>
+  </div>
+</div>
+
+<!-- ================= DELETE CONFIRM MODAL ================= -->
+<div class="modal-overlay hidden" id="delete-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <h2 id="delete-modal-title">Delete all journal data?</h2>
+    <p class="muted">This permanently removes every entry stored on this device, including demo entries. This can't be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancel-delete-btn">Cancel</button>
+      <button class="btn btn-danger" id="confirm-delete-btn">Delete everything</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindSpace — Mental Wellness Journal</title>
+<meta name="description" content="A private, local-first journal for daily reflection, mood tracking, and calm.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   MindSpace — design tokens
+   ========================================================= */
+:root {
+  --bg: #F5F7F3;
+  --surface: #FFFFFF;
+  --surface-alt: #ECF0EA;
+  --ink: #1E2A24;
+  --ink-muted: #5C6C63;
+  --border: #DCE3DA;
+  --accent: #3F7A5E;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E2EFE7;
+  --accent-2: #62759C;
+  --accent-2-soft: #E7ECF3;
+  --warm: #C98A46;
+  --warm-soft: #F4E7D5;
+  --danger: #B0523E;
+  --danger-soft: #F5E2DD;
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --radius-s: 8px;
+  --radius-m: 14px;
+  --radius-l: 22px;
+  --shadow-card: 0 1px 2px rgba(30, 42, 36, 0.04), 0 6px 20px rgba(30, 42, 36, 0.05);
+  --transition: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --bg: #12181A;
+  --surface: #1A2224;
+  --surface-alt: #212A2C;
+  --ink: #E9EEE9;
+  --ink-muted: #93A29A;
+  --border: #2A3436;
+  --accent: #6FAE8B;
+  --accent-ink: #0E1512;
+  --accent-soft: #1F2D27;
+  --accent-2: #94AAD4;
+  --accent-2-soft: #1F2732;
+  --warm: #E1AD73;
+  --warm-soft: #2E2519;
+  --danger: #E08D77;
+  --danger-soft: #2E211D;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+body { transition: background var(--transition), color var(--transition); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; }
+p { margin: 0; line-height: 1.6; color: var(--ink); }
+.muted { color: var(--ink-muted); }
+.hidden { display: none !important; }
+button { font-family: inherit; cursor: pointer; }
+textarea, input { font-family: inherit; }
+ul { margin: 0; padding-left: 1.1em; }
+li { margin-bottom: 6px; line-height: 1.55; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* =========================================================
+   Shared bits
+   ========================================================= */
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--accent) 0%, var(--accent) 55%, transparent 56%);
+  position: relative; flex-shrink: 0;
+}
+.brand-mark::after {
+  content: ""; position: absolute; inset: 5px; border-radius: 50%;
+  border: 1.5px solid var(--accent-soft);
+}
+.brand-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: none; border-radius: 999px; padding: 13px 24px;
+  font-size: 0.95rem; font-weight: 600; letter-spacing: -0.005em;
+  transition: transform var(--transition), background var(--transition), opacity var(--transition), box-shadow var(--transition);
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { box-shadow: 0 6px 18px rgba(63, 122, 94, 0.28); }
+.btn-secondary { background: var(--accent-soft); color: var(--accent); }
+.btn-secondary:hover { opacity: 0.85; }
+.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--surface-alt); }
+.btn-text { background: none; color: var(--ink-muted); padding: 13px 6px; font-weight: 500; }
+.btn-text:hover { color: var(--ink); }
+.btn-danger { background: var(--danger-soft); color: var(--danger); }
+.btn-danger:hover { opacity: 0.85; }
+.btn-small { padding: 9px 16px; font-size: 0.85rem; }
+.btn:focus-visible, .nav-item:focus-visible, .mood-option:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent-2); outline-offset: 2px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+  margin-bottom: 20px;
+  transition: background var(--transition), border-color var(--transition);
+}
+.card-title { font-size: 1.05rem; margin-bottom: 16px; }
+
+/* =========================================================
+   LANDING PAGE
+   ========================================================= */
+.landing { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+.landing-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 0;
+}
+.hero {
+  display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px;
+  align-items: center; padding: 40px 0 80px;
+}
+.eyebrow {
+  font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--accent); margin-bottom: 18px;
+}
+.hero-title {
+  font-size: clamp(2.4rem, 5vw, 3.6rem); line-height: 1.08; letter-spacing: -0.02em;
+  margin-bottom: 22px; font-weight: 500;
+}
+.hero-sub { font-size: 1.08rem; color: var(--ink-muted); max-width: 46ch; margin-bottom: 30px; }
+.hero-actions { display: flex; align-items: center; gap: 6px; margin-bottom: 22px; flex-wrap: wrap; }
+.hero-privacy { font-size: 0.88rem; color: var(--ink-muted); }
+
+.hero-visual { display: flex; align-items: center; justify-content: center; }
+.breath-rings {
+  position: relative; width: 320px; height: 320px;
+  display: flex; align-items: center; justify-content: center;
+}
+.ring {
+  position: absolute; border-radius: 50%; border: 1px solid var(--accent);
+  opacity: 0.35;
+}
+.ring-1 { width: 100%; height: 100%; animation: pulseRing 7s ease-in-out infinite; }
+.ring-2 { width: 74%; height: 74%; animation: pulseRing 7s ease-in-out infinite 0.6s; }
+.ring-3 { width: 48%; height: 48%; animation: pulseRing 7s ease-in-out infinite 1.2s; }
+.ring-core {
+  width: 24%; height: 24%; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--accent), var(--accent-2));
+  animation: coreBreath 7s ease-in-out infinite;
+}
+@keyframes pulseRing {
+  0%, 100% { transform: scale(0.94); opacity: 0.2; }
+  50% { transform: scale(1.02); opacity: 0.5; }
+}
+@keyframes coreBreath {
+  0%, 100% { transform: scale(0.9); }
+  50% { transform: scale(1.06); }
+}
+
+.narrative {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  padding: 50px 0 70px; border-top: 1px solid var(--border);
+}
+.narrative-label {
+  font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--accent-2); display: block; margin-bottom: 12px;
+}
+.narrative-item h2 { font-size: 1.35rem; margin-bottom: 12px; font-weight: 500; line-height: 1.25; }
+.narrative-item p { color: var(--ink-muted); font-size: 0.96rem; }
+
+.landing-footer {
+  border-top: 1px solid var(--border); padding: 26px 0 40px;
+  text-align: center; color: var(--ink-muted); font-size: 0.85rem;
+}
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; padding-top: 10px; }
+  .hero-visual { order: -1; }
+  .breath-rings { width: 220px; height: 220px; }
+  .narrative { grid-template-columns: 1fr; gap: 34px; }
+}
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 232px; flex-shrink: 0; background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 26px 18px; position: sticky; top: 0; height: 100vh;
+}
+.side-nav { display: flex; flex-direction: column; gap: 4px; margin-top: 36px; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px; text-align: left;
+  background: none; border: none; border-radius: var(--radius-s);
+  padding: 11px 12px; font-size: 0.94rem; font-weight: 500; color: var(--ink-muted);
+  transition: background var(--transition), color var(--transition);
+}
+.nav-item:hover { background: var(--surface-alt); color: var(--ink); }
+.nav-item.active { background: var(--accent-soft); color: var(--accent); }
+.nav-icon { width: 18px; text-align: center; font-size: 1rem; }
+.sidebar-footer { display: flex; flex-direction: column; gap: 8px; }
+
+.mobile-topbar { display: none; }
+
+.main-content { flex: 1; padding: 44px 48px 80px; max-width: 880px; }
+.view { display: none; animation: fadeUp 320ms ease; }
+.view.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.view-header { margin-bottom: 28px; }
+.view-header h1 { font-size: 1.7rem; margin-bottom: 6px; }
+.view-sub { color: var(--ink-muted); font-size: 0.96rem; }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .mobile-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  }
+  .main-content { padding: 20px 18px 100px; }
+  .app { flex-direction: column; padding-bottom: 64px; }
+  .app::after { content: ""; }
+}
+
+/* Bottom tab bar for mobile */
+@media (max-width: 900px) {
+  .app { position: relative; }
+}
+.bottom-nav { display: none; }
+@media (max-width: 900px) {
+  .bottom-nav {
+    display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--surface); border-top: 1px solid var(--border);
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+    justify-content: space-around; z-index: 20;
+  }
+  .bottom-nav .nav-item { flex-direction: column; gap: 3px; font-size: 0.68rem; padding: 6px 8px; }
+  .bottom-nav .nav-icon { font-size: 1.15rem; }
+}
+
+/* =========================================================
+   JOURNAL VIEW
+   ========================================================= */
+.journal-main-label { display: block; font-weight: 600; font-size: 1.05rem; margin-bottom: 12px; }
+.journal-textarea, .prompt-field textarea {
+  width: 100%; border: 1px solid var(--border); border-radius: var(--radius-m);
+  background: var(--surface-alt); color: var(--ink); padding: 14px 16px;
+  font-size: 0.98rem; line-height: 1.6; resize: vertical;
+  transition: border-color var(--transition), background var(--transition);
+}
+.journal-textarea:focus, .prompt-field textarea:focus {
+  outline: none; border-color: var(--accent); background: var(--surface);
+}
+
+.mood-picker { margin-top: 22px; }
+.mood-picker-label { display: block; font-size: 0.86rem; font-weight: 600; color: var(--ink-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.03em; }
+.mood-options { display: flex; gap: 10px; flex-wrap: wrap; }
+.mood-option {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: var(--surface-alt); border: 1.5px solid transparent; border-radius: var(--radius-m);
+  padding: 12px 16px; min-width: 76px; transition: all var(--transition);
+}
+.mood-option:hover { background: var(--accent-soft); }
+.mood-option.selected { border-color: var(--accent); background: var(--accent-soft); }
+.mood-emoji { font-size: 1.5rem; }
+.mood-text { font-size: 0.76rem; color: var(--ink-muted); font-weight: 500; }
+.mood-option.selected .mood-text { color: var(--accent); }
+
+.prompts-toggle {
+  background: none; border: none; color: var(--accent-2); font-weight: 600;
+  font-size: 0.88rem; padding: 18px 0 4px; text-align: left;
+}
+.optional-prompts { margin-top: 12px; display: flex; flex-direction: column; gap: 16px; }
+.prompt-field label { display: block; font-size: 0.86rem; font-weight: 500; color: var(--ink-muted); margin-bottom: 6px; }
+
+.journal-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 22px; gap: 12px; }
+.save-hint { font-size: 0.84rem; color: var(--ink-muted); }
+
+.reflection-card { background: var(--accent-soft); border-color: transparent; }
+.reflection-card p { color: var(--accent); font-weight: 500; font-size: 1rem; }
+[data-theme="dark"] .reflection-card p { color: var(--ink); }
+
+.crisis-card { background: var(--danger-soft); border-color: transparent; }
+.crisis-card h3 { color: var(--danger); font-size: 1.1rem; margin-bottom: 10px; }
+.crisis-card p { margin-bottom: 12px; }
+.crisis-card ul { margin-bottom: 16px; }
+
+.entries-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+.entries-count { font-family: var(--font-mono); font-size: 0.82rem; color: var(--ink-muted); }
+.entries-list { display: flex; flex-direction: column; gap: 14px; }
+.entry-item {
+  border: 1px solid var(--border); border-radius: var(--radius-m); padding: 16px 18px;
+  background: var(--surface-alt);
+}
+.entry-item-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.entry-date { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-muted); }
+.entry-mood { font-size: 1.15rem; }
+.entry-text { font-size: 0.94rem; color: var(--ink); white-space: pre-wrap; }
+.entry-demo-badge {
+  font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em;
+  background: var(--warm-soft); color: var(--warm); padding: 2px 8px; border-radius: 999px; margin-left: 8px;
+}
+.entry-prompts { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.entry-prompt-q { font-size: 0.78rem; font-weight: 600; color: var(--accent-2); }
+.entry-prompt-a { font-size: 0.9rem; color: var(--ink); margin-top: 2px; }
+.empty-state { color: var(--ink-muted); font-size: 0.92rem; padding: 20px 0; text-align: center; }
+
+/* =========================================================
+   MOOD CHART (custom bar chart, no dependencies)
+   ========================================================= */
+.chart-wrap { display: flex; align-items: flex-end; gap: 10px; height: 180px; padding-top: 10px; }
+.chart-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 8px; }
+.chart-bar {
+  width: 100%; max-width: 34px; border-radius: 8px 8px 4px 4px; background: var(--accent);
+  transition: height 500ms cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+.chart-bar-empty { background: var(--surface-alt); height: 4px !important; }
+.chart-emoji { font-size: 1.1rem; }
+.chart-day-label { font-size: 0.72rem; color: var(--ink-muted); font-family: var(--font-mono); }
+
+.mood-history-list { display: flex; flex-direction: column; gap: 10px; }
+.mood-history-row {
+  display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.mood-history-row:last-child { border-bottom: none; }
+.mood-history-emoji { font-size: 1.2rem; width: 28px; }
+.mood-history-date { color: var(--ink-muted); font-family: var(--font-mono); font-size: 0.78rem; flex: 1; }
+.mood-history-label { font-weight: 500; }
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 20px; }
+.stat-card { display: flex; flex-direction: column; gap: 8px; padding: 22px 24px; margin-bottom: 0; }
+.stat-label { font-size: 0.8rem; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+.stat-value { font-family: var(--font-display); font-size: 2.1rem; font-weight: 600; color: var(--ink); }
+.stat-unit { font-size: 1rem; font-family: var(--font-body); color: var(--ink-muted); font-weight: 500; }
+.stat-emoji { font-size: 2rem; }
+@media (max-width: 700px) { .stat-grid { grid-template-columns: 1fr; } }
+
+.today-card #today-reflection { font-size: 0.95rem; }
+.demo-card { background: var(--surface-alt); }
+.demo-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+
+/* =========================================================
+   BREATHING EXERCISE
+   ========================================================= */
+.breathe-card { display: flex; flex-direction: column; align-items: center; padding: 50px 28px; }
+.breathe-visual { width: 260px; height: 260px; display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
+.breathe-circle {
+  width: 140px; height: 140px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--accent), var(--accent-2));
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 3.8s cubic-bezier(0.45, 0, 0.55, 1), background 400ms;
+  box-shadow: 0 0 0 1px var(--border), 0 20px 50px rgba(63, 122, 94, 0.18);
+}
+.breathe-instruction { color: var(--accent-ink); font-weight: 600; font-size: 0.98rem; text-align: center; padding: 0 10px; }
+.breathe-timer { font-family: var(--font-mono); font-size: 1.1rem; color: var(--ink-muted); margin-bottom: 22px; }
+.breathe-controls { display: flex; gap: 12px; }
+
+/* breathing states set inline via JS transform / class */
+.breathe-circle.state-in { transform: scale(1.35); }
+.breathe-circle.state-hold { transform: scale(1.35); }
+.breathe-circle.state-out { transform: scale(0.85); }
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(18, 24, 20, 0.5);
+  display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px;
+  backdrop-filter: blur(2px);
+}
+.modal {
+  background: var(--surface); border-radius: var(--radius-l); padding: 30px;
+  max-width: 440px; width: 100%; box-shadow: var(--shadow-card);
+  animation: modalIn 220ms ease;
+}
+@keyframes modalIn { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.modal h2 { font-size: 1.25rem; margin-bottom: 14px; }
+.modal p { margin-bottom: 10px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+</style>
+</head>
+<body>
+
+<!-- ================= LANDING PAGE ================= -->
+<div id="landing" class="landing">
+
+  <header class="landing-nav">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">MindSpace</span>
+    </div>
+    <button class="btn btn-ghost" id="landing-theme-toggle" aria-label="Toggle dark mode">
+      <span class="theme-icon">◐</span>
+    </button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">A private space to breathe, think, and reflect</p>
+      <h1 class="hero-title">Some days<br>need a quiet place<br>to land.</h1>
+      <p class="hero-sub">MindSpace is a self-reflection journal — a few quiet minutes to name how you feel, track it over time, and build a habit that sticks. Everything stays on your device.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="enter-app-btn">Start reflecting</button>
+        <a href="#how-it-works" class="btn btn-text">How it works ↓</a>
+      </div>
+      <p class="hero-privacy">🔒 Nothing you write ever leaves this browser.</p>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="breath-rings">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="ring-core"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="narrative" id="how-it-works">
+    <div class="narrative-item">
+      <span class="narrative-label">The problem</span>
+      <h2>Reflection rarely happens on its own.</h2>
+      <p>Most people mean to check in with themselves — and most days, it just doesn't happen. Feelings pile up unexamined, and the habit that would help the most is the one that keeps slipping.</p>
+    </div>
+    <div class="narrative-item">
+      <span class="narrative-label">The solution</span>
+      <h2>A small, honest ritual.</h2>
+      <p>MindSpace gives you one calm place to write, name a mood, and see it laid out over time — with guided prompts when you don't know where to start, and a breathing exercise when you just need a minute.</p>
+    </div>
+    <div class="narrative-item">
+      <span class="narrative-label">The impact</span>
+      <h2>Awareness, without exposure.</h2>
+      <p>Every entry stays on your device, in your browser's storage. Nothing is uploaded, tracked, or shared — so the only cost of building the habit is a few honest minutes.</p>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <p>MindSpace is a self-reflection tool and is not a substitute for professional mental-health care.</p>
+  </footer>
+</div>
+
+<!-- ================= APP SHELL ================= -->
+<div id="app" class="app hidden">
+
+  <aside class="sidebar">
+    <div class="brand" id="app-brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">MindSpace</span>
+    </div>
+
+    <nav class="side-nav" aria-label="Main">
+      <button class="nav-item active" data-view="journal">
+        <span class="nav-icon">✎</span><span>Journal</span>
+      </button>
+      <button class="nav-item" data-view="mood">
+        <span class="nav-icon">◔</span><span>Mood</span>
+      </button>
+      <button class="nav-item" data-view="dashboard">
+        <span class="nav-icon">▦</span><span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-view="breathe">
+        <span class="nav-icon">◯</span><span>Breathe</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn btn-ghost btn-small" id="app-theme-toggle">
+        <span class="theme-icon">◐</span> <span id="theme-label">Dark mode</span>
+      </button>
+      <button class="btn btn-ghost btn-small" id="privacy-btn">🔒 Privacy</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- Mobile top bar -->
+    <div class="mobile-topbar">
+      <span class="brand-name">MindSpace</span>
+      <button class="btn btn-ghost btn-small" id="mobile-theme-toggle" aria-label="Toggle dark mode">◐</button>
+    </div>
+
+    <!-- ---------- JOURNAL VIEW ---------- -->
+    <section class="view active" id="view-journal">
+      <div class="view-header">
+        <h1>Daily Journal</h1>
+        <p class="view-sub" id="today-date-label"></p>
+      </div>
+
+      <div class="card journal-card">
+        <label class="journal-main-label" for="journal-main">How are you feeling today?</label>
+        <textarea id="journal-main" class="journal-textarea" rows="5" placeholder="Write whatever comes to mind — there's no wrong way to do this."></textarea>
+
+        <div class="mood-picker">
+          <span class="mood-picker-label">Today's mood</span>
+          <div class="mood-options" id="mood-options" role="radiogroup" aria-label="Select your mood">
+            <button type="button" class="mood-option" data-mood="great" role="radio" aria-checked="false">
+              <span class="mood-emoji">😄</span><span class="mood-text">Great</span>
+            </button>
+            <button type="button" class="mood-option" data-mood="good" role="radio" aria-checked="false">
+              <span class="mood-emoji">🙂</span><span class="mood-text">Good</span>
+            </button>
+            <button type="button" class="mood-option" data-mood="okay" role="radio" aria-checked="false">
+              <span class="mood-emoji">😐</span><span class="mood-text">Okay</span>
+            </button>
+            <button type="button" class="mood-option" data-mood="low" role="radio" aria-checked="false">
+              <span class="mood-emoji">😔</span><span class="mood-text">Low</span>
+            </button>
+            <button type="button" class="mood-option" data-mood="difficult" role="radio" aria-checked="false">
+              <span class="mood-emoji">😣</span><span class="mood-text">Difficult</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="prompts-toggle" id="prompts-toggle" type="button" aria-expanded="false">
+          <span>+ Add guided prompts</span>
+        </button>
+
+        <div class="optional-prompts" id="optional-prompts" hidden>
+          <div class="prompt-field">
+            <label for="prompt-happy">What made you happy today?</label>
+            <textarea id="prompt-happy" rows="2"></textarea>
+          </div>
+          <div class="prompt-field">
+            <label for="prompt-difficult">What was difficult today?</label>
+            <textarea id="prompt-difficult" rows="2"></textarea>
+          </div>
+          <div class="prompt-field">
+            <label for="prompt-grateful">What are you grateful for?</label>
+            <textarea id="prompt-grateful" rows="2"></textarea>
+          </div>
+          <div class="prompt-field">
+            <label for="prompt-improve">What is one thing you want to improve tomorrow?</label>
+            <textarea id="prompt-improve" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="journal-actions">
+          <span class="save-hint" id="save-hint"></span>
+          <button class="btn btn-primary" id="save-entry-btn">Save entry</button>
+        </div>
+      </div>
+
+      <!-- Reflection / crisis message shown after save -->
+      <div class="card reflection-card hidden" id="reflection-card">
+        <p id="reflection-text"></p>
+      </div>
+
+      <div class="card crisis-card hidden" id="crisis-card">
+        <h3>You don't have to carry this alone</h3>
+        <p>It sounds like things might feel really heavy right now. MindSpace can't offer professional support, but reaching out to someone can help.</p>
+        <ul>
+          <li>Talk to a friend, family member, or anyone you trust.</li>
+          <li>In India: <strong>KIRAN helpline — 1800-599-0019</strong> (toll-free, 24/7).</li>
+          <li>In the US: call or text <strong>988</strong> (Suicide &amp; Crisis Lifeline).</li>
+          <li>Elsewhere: search "crisis helpline" plus your country, or contact local emergency services.</li>
+          <li>If you're in immediate danger, please contact emergency services right now.</li>
+        </ul>
+        <button class="btn btn-secondary btn-small" id="dismiss-crisis-btn">I've seen this</button>
+      </div>
+
+      <div class="card entries-card">
+        <div class="entries-header">
+          <h2>Past entries</h2>
+          <span class="entries-count" id="entries-count"></span>
+        </div>
+        <div class="entries-list" id="entries-list"></div>
+      </div>
+    </section>
+
+    <!-- ---------- MOOD VIEW ---------- -->
+    <section class="view" id="view-mood">
+      <div class="view-header">
+        <h1>Mood Tracker</h1>
+        <p class="view-sub">A look at how your days have felt.</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Weekly mood trend</h2>
+        <div id="mood-chart-weekly" class="chart-wrap"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Mood history</h2>
+        <div id="mood-history-list" class="mood-history-list"></div>
+      </div>
+    </section>
+
+    <!-- ---------- DASHBOARD VIEW ---------- -->
+    <section class="view" id="view-dashboard">
+      <div class="view-header">
+        <h1>Reflection Dashboard</h1>
+        <p class="view-sub">Your reflection habit, at a glance.</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="card stat-card">
+          <span class="stat-label">Total entries</span>
+          <span class="stat-value" id="stat-total">0</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Current streak</span>
+          <span class="stat-value" id="stat-streak">0<span class="stat-unit"> days</span></span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Most common mood</span>
+          <span class="stat-value stat-emoji" id="stat-common-mood">—</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">This week</h2>
+        <div id="mood-chart-dashboard" class="chart-wrap"></div>
+      </div>
+
+      <div class="card today-card">
+        <h2 class="card-title">Your reflection for today</h2>
+        <div id="today-reflection"></div>
+      </div>
+
+      <div class="card demo-card">
+        <h2 class="card-title">Demo data</h2>
+        <p class="muted">Load a few labelled sample entries to explore MindSpace, or clear everything you've written.</p>
+        <div class="demo-actions">
+          <button class="btn btn-secondary btn-small" id="load-demo-btn">Load demo entries</button>
+          <button class="btn btn-danger btn-small" id="delete-all-btn">Delete all journal data</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- BREATHE VIEW ---------- -->
+    <section class="view" id="view-breathe">
+      <div class="view-header">
+        <h1>Breathing Exercise</h1>
+        <p class="view-sub">Sixty seconds. Follow the circle.</p>
+      </div>
+
+      <div class="card breathe-card">
+        <div class="breathe-visual">
+          <div class="breathe-circle" id="breathe-circle">
+            <span class="breathe-instruction" id="breathe-instruction">Ready</span>
+          </div>
+        </div>
+        <div class="breathe-timer" id="breathe-timer">60s</div>
+        <div class="breathe-controls">
+          <button class="btn btn-primary" id="breathe-start-btn">Start breathing exercise</button>
+          <button class="btn btn-ghost hidden" id="breathe-stop-btn">Stop</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav" aria-label="Main">
+    <button class="nav-item active" data-view="journal">
+      <span class="nav-icon">✎</span><span>Journal</span>
+    </button>
+    <button class="nav-item" data-view="mood">
+      <span class="nav-icon">◔</span><span>Mood</span>
+    </button>
+    <button class="nav-item" data-view="dashboard">
+      <span class="nav-icon">▦</span><span>Dashboard</span>
+    </button>
+    <button class="nav-item" data-view="breathe">
+      <span class="nav-icon">◯</span><span>Breathe</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ================= PRIVACY MODAL ================= -->
+<div class="modal-overlay hidden" id="privacy-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="privacy-modal-title">
+    <h2 id="privacy-modal-title">Your privacy</h2>
+    <p><strong>Your journal entries stay on this device and are not sent to a server.</strong></p>
+    <p class="muted">MindSpace has no backend, no account, and no analytics. Everything you write is stored using your browser's local storage, on this device only. Clearing your browser data, or using a different device or browser, will not carry entries over. You can permanently delete everything from the Dashboard at any time.</p>
+    <button class="btn btn-primary" id="close-privacy-btn">Got it</button>
+  </div>
+</div>
+
+<!-- ================= DELETE CONFIRM MODAL ================= -->
+<div class="modal-overlay hidden" id="delete-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <h2 id="delete-modal-title">Delete all journal data?</h2>
+    <p class="muted">This permanently removes every entry stored on this device, including demo entries. This can't be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancel-delete-btn">Cancel</button>
+      <button class="btn btn-danger" id="confirm-delete-btn">Delete everything</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   MindSpace — app.js
+   A private, local-first wellness journal.
+   No backend, no analytics, no network calls.
+   ========================================================= */
+
+(function () {
+  "use strict";
+
+  /* ---------- Storage keys ---------- */
+  const ENTRIES_KEY = "mindspace_entries";
+  const THEME_KEY = "mindspace_theme";
+
+  /* ---------- Mood reference data ---------- */
+  const MOODS = {
+    great:     { emoji: "😄", label: "Great",     value: 5 },
+    good:      { emoji: "🙂", label: "Good",      value: 4 },
+    okay:      { emoji: "😐", label: "Okay",      value: 3 },
+    low:       { emoji: "😔", label: "Low",       value: 2 },
+    difficult: { emoji: "😣", label: "Difficult", value: 1 },
+  };
+
+  /* ---------- Gentle post-save reflections (rotated, not diagnostic) ---------- */
+  const REFLECTIONS = [
+    "Thank you for taking a moment to reflect today.",
+    "That's one more honest check-in with yourself. Well done.",
+    "Noticing how you feel is a quiet kind of self-care. Nice work.",
+    "Whatever today held, you showed up for yourself just now.",
+    "Small habit, real value — thanks for writing today.",
+  ];
+
+  /* ---------- Very light, supportive-only safety net ----------
+     This is NOT a diagnostic tool. It only looks for a small set of
+     phrases that suggest someone may be in crisis, so MindSpace can
+     point them toward real support instead of just saying "thanks". */
+  const CONCERN_PHRASES = [
+    "kill myself", "end my life", "ending my life", "want to die",
+    "wish i was dead", "wish i were dead", "suicide", "suicidal",
+    "hurt myself", "harm myself", "self harm", "self-harm",
+    "no reason to live", "not worth living", "can't go on", "cant go on",
+    "better off dead", "no point in living",
+  ];
+
+  /* ---------- State ---------- */
+  let entries = [];
+  let selectedMood = null;
+  let breathing = { timer: null, cycleTimer: null, secondsLeft: 60, running: false };
+
+  /* ============================================================
+     Utilities
+     ============================================================ */
+  function loadEntries() {
+    try {
+      const raw = localStorage.getItem(ENTRIES_KEY);
+      entries = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      console.error("MindSpace: could not read saved entries, starting fresh.", e);
+      entries = [];
+    }
+  }
+
+  function persistEntries() {
+    localStorage.setItem(ENTRIES_KEY, JSON.stringify(entries));
+  }
+
+  function sortedEntries() {
+    return [...entries].sort((a, b) => new Date(b.isoDate) - new Date(a.isoDate));
+  }
+
+  function formatDateTime(iso) {
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, {
+      month: "short", day: "numeric", year: "numeric",
+      hour: "numeric", minute: "2-digit",
+    });
+  }
+
+  function formatDayLabel(date) {
+    return date.toLocaleDateString(undefined, { weekday: "short" });
+  }
+
+  function isSameDay(a, b) {
+    return a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate();
+  }
+
+  function containsConcernLanguage(text) {
+    const lower = text.toLowerCase();
+    return CONCERN_PHRASES.some((phrase) => lower.includes(phrase));
+  }
+
+  function uid() {
+    return "e_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+  }
+
+  /* ============================================================
+     Theme
+     ============================================================ */
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem(THEME_KEY, theme);
+    const label = document.getElementById("theme-label");
+    if (label) label.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+  }
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute("data-theme") || "light";
+    applyTheme(current === "dark" ? "light" : "dark");
+  }
+
+  function initTheme() {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved) {
+      applyTheme(saved);
+    } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      applyTheme("dark");
+    } else {
+      applyTheme("light");
+    }
+  }
+
+  /* ============================================================
+     Landing <-> App
+     ============================================================ */
+  function enterApp() {
+    document.getElementById("landing").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    renderAll();
+  }
+
+  /* ============================================================
+     Navigation between views
+     ============================================================ */
+  function switchView(viewName) {
+    document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
+    const target = document.getElementById("view-" + viewName);
+    if (target) target.classList.add("active");
+
+    document.querySelectorAll(".nav-item").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.view === viewName);
+    });
+
+    if (viewName === "mood") renderMoodView();
+    if (viewName === "dashboard") renderDashboard();
+  }
+
+  /* ============================================================
+     Mood picker (journal form)
+     ============================================================ */
+  function initMoodPicker() {
+    const options = document.querySelectorAll(".mood-option");
+    options.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        selectedMood = btn.dataset.mood;
+        options.forEach((o) => {
+          o.classList.toggle("selected", o === btn);
+          o.setAttribute("aria-checked", o === btn ? "true" : "false");
+        });
+      });
+    });
+  }
+
+  function resetMoodPicker() {
+    selectedMood = null;
+    document.querySelectorAll(".mood-option").forEach((o) => {
+      o.classList.remove("selected");
+      o.setAttribute("aria-checked", "false");
+    });
+  }
+
+  /* ============================================================
+     Journal: save entry
+     ============================================================ */
+  function saveEntry() {
+    const mainText = document.getElementById("journal-main").value.trim();
+    const promptHappy = document.getElementById("prompt-happy").value.trim();
+    const promptDifficult = document.getElementById("prompt-difficult").value.trim();
+    const promptGrateful = document.getElementById("prompt-grateful").value.trim();
+    const promptImprove = document.getElementById("prompt-improve").value.trim();
+
+    const hint = document.getElementById("save-hint");
+
+    if (!mainText && !promptHappy && !promptDifficult && !promptGrateful && !promptImprove) {
+      hint.textContent = "Write a little something before saving.";
+      hint.style.color = "var(--danger)";
+      return;
+    }
+
+    const entry = {
+      id: uid(),
+      isoDate: new Date().toISOString(),
+      mood: selectedMood,
+      text: mainText,
+      prompts: {
+        happy: promptHappy,
+        difficult: promptDifficult,
+        grateful: promptGrateful,
+        improve: promptImprove,
+      },
+      demo: false,
+    };
+
+    entries.push(entry);
+    persistEntries();
+
+    const allText = [mainText, promptHappy, promptDifficult, promptGrateful, promptImprove].join(" ");
+    const concerning = containsConcernLanguage(allText);
+
+    showPostSaveMessage(concerning);
+    clearJournalForm();
+    renderEntries();
+    hint.textContent = "Saved just now.";
+    hint.style.color = "var(--ink-muted)";
+  }
+
+  function showPostSaveMessage(concerning) {
+    const reflectionCard = document.getElementById("reflection-card");
+    const crisisCard = document.getElementById("crisis-card");
+
+    if (concerning) {
+      crisisCard.classList.remove("hidden");
+      reflectionCard.classList.add("hidden");
+      crisisCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      const msg = REFLECTIONS[Math.floor(Math.random() * REFLECTIONS.length)];
+      document.getElementById("reflection-text").textContent = msg;
+      reflectionCard.classList.remove("hidden");
+      crisisCard.classList.add("hidden");
+      setTimeout(() => reflectionCard.classList.add("hidden"), 6000);
+    }
+  }
+
+  function clearJournalForm() {
+    document.getElementById("journal-main").value = "";
+    document.getElementById("prompt-happy").value = "";
+    document.getElementById("prompt-difficult").value = "";
+    document.getElementById("prompt-grateful").value = "";
+    document.getElementById("prompt-improve").value = "";
+    resetMoodPicker();
+  }
+
+  /* ============================================================
+     Render: entries list
+     ============================================================ */
+  function renderEntries() {
+    const list = document.getElementById("entries-list");
+    const countEl = document.getElementById("entries-count");
+    const sorted = sortedEntries();
+
+    countEl.textContent = sorted.length === 1 ? "1 entry" : sorted.length + " entries";
+
+    if (sorted.length === 0) {
+      list.innerHTML = '<p class="empty-state">No entries yet. Your first one is above — there\'s no wrong way to start.</p>';
+      return;
+    }
+
+    list.innerHTML = sorted.map((e) => {
+      const moodInfo = e.mood ? MOODS[e.mood] : null;
+      const promptRows = ["happy", "difficult", "grateful", "improve"]
+        .filter((k) => e.prompts && e.prompts[k])
+        .map((k) => {
+          const questions = {
+            happy: "What made you happy today?",
+            difficult: "What was difficult today?",
+            grateful: "What are you grateful for?",
+            improve: "One thing to improve tomorrow",
+          };
+          return `<div><div class="entry-prompt-q">${questions[k]}</div><div class="entry-prompt-a">${escapeHtml(e.prompts[k])}</div></div>`;
+        }).join("");
+
+      return `
+        <div class="entry-item">
+          <div class="entry-item-head">
+            <span class="entry-date">${formatDateTime(e.isoDate)}${e.demo ? '<span class="entry-demo-badge">Demo</span>' : ""}</span>
+            ${moodInfo ? `<span class="entry-mood" title="${moodInfo.label}">${moodInfo.emoji}</span>` : ""}
+          </div>
+          ${e.text ? `<div class="entry-text">${escapeHtml(e.text)}</div>` : ""}
+          ${promptRows ? `<div class="entry-prompts">${promptRows}</div>` : ""}
+        </div>`;
+    }).join("");
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /* ============================================================
+     Mood view + weekly chart (shared by Mood view & Dashboard)
+     ============================================================ */
+  function lastNDays(n) {
+    const days = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    for (let i = n - 1; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      days.push(d);
+    }
+    return days;
+  }
+
+  function moodForDay(day) {
+    // If multiple entries on a day, use the last one recorded that day.
+    const dayEntries = entries
+      .filter((e) => e.mood && isSameDay(new Date(e.isoDate), day))
+      .sort((a, b) => new Date(a.isoDate) - new Date(b.isoDate));
+    if (dayEntries.length === 0) return null;
+    return dayEntries[dayEntries.length - 1].mood;
+  }
+
+  function renderWeeklyChart(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const days = lastNDays(7);
+
+    container.innerHTML = days.map((day) => {
+      const mood = moodForDay(day);
+      const info = mood ? MOODS[mood] : null;
+      const heightPct = info ? (info.value / 5) * 100 : 0;
+      return `
+        <div class="chart-bar-col">
+          <span class="chart-emoji">${info ? info.emoji : "·"}</span>
+          <div class="chart-bar ${info ? "" : "chart-bar-empty"}" style="height:${info ? heightPct : 3}%"></div>
+          <span class="chart-day-label">${formatDayLabel(day)}</span>
+        </div>`;
+    }).join("");
+  }
+
+  function renderMoodView() {
+    renderWeeklyChart("mood-chart-weekly");
+
+    const historyList = document.getElementById("mood-history-list");
+    const withMood = sortedEntries().filter((e) => e.mood);
+    if (withMood.length === 0) {
+      historyList.innerHTML = '<p class="empty-state">No moods logged yet. Pick one next time you write an entry.</p>';
+      return;
+    }
+    historyList.innerHTML = withMood.map((e) => {
+      const info = MOODS[e.mood];
+      return `
+        <div class="mood-history-row">
+          <span class="mood-history-emoji">${info.emoji}</span>
+          <span class="mood-history-label">${info.label}</span>
+          <span class="mood-history-date">${formatDateTime(e.isoDate)}</span>
+        </div>`;
+    }).join("");
+  }
+
+  /* ============================================================
+     Dashboard: stats
+     ============================================================ */
+  function computeStreak() {
+    const daysWithEntries = new Set(
+      entries.map((e) => {
+        const d = new Date(e.isoDate);
+        d.setHours(0, 0, 0, 0);
+        return d.getTime();
+      })
+    );
+    if (daysWithEntries.size === 0) return 0;
+
+    let streak = 0;
+    const cursor = new Date();
+    cursor.setHours(0, 0, 0, 0);
+
+    // If nothing logged today yet, streak can still count from yesterday backward.
+    if (!daysWithEntries.has(cursor.getTime())) {
+      cursor.setDate(cursor.getDate() - 1);
+    }
+
+    while (daysWithEntries.has(cursor.getTime())) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  }
+
+  function mostCommonMood() {
+    const counts = {};
+    entries.forEach((e) => {
+      if (e.mood) counts[e.mood] = (counts[e.mood] || 0) + 1;
+    });
+    const keys = Object.keys(counts);
+    if (keys.length === 0) return null;
+    return keys.reduce((a, b) => (counts[a] >= counts[b] ? a : b));
+  }
+
+  function renderDashboard() {
+    document.getElementById("stat-total").textContent = entries.length;
+    document.getElementById("stat-streak").innerHTML = computeStreak() + '<span class="stat-unit"> days</span>';
+
+    const common = mostCommonMood();
+    document.getElementById("stat-common-mood").textContent = common
+      ? `${MOODS[common].emoji} ${MOODS[common].label}`
+      : "—";
+
+    renderWeeklyChart("mood-chart-dashboard");
+    renderTodayReflection();
+  }
+
+  function renderTodayReflection() {
+    const today = new Date();
+    const todaysEntries = entries.filter((e) => isSameDay(new Date(e.isoDate), today));
+    const el = document.getElementById("today-reflection");
+
+    if (todaysEntries.length === 0) {
+      el.innerHTML = '<p class="empty-state">You haven\'t written today yet. Head to the Journal tab whenever you\'re ready.</p>';
+      return;
+    }
+    const latest = todaysEntries[todaysEntries.length - 1];
+    const info = latest.mood ? MOODS[latest.mood] : null;
+    el.innerHTML = `
+      <p>${info ? `${info.emoji} You logged your day as <strong>${info.label}</strong>. ` : ""}${latest.text ? escapeHtml(latest.text) : "Thanks for checking in today."}</p>
+    `;
+  }
+
+  /* ============================================================
+     Demo data
+     ============================================================ */
+  function buildDemoEntries() {
+    const now = new Date();
+    const demo = [
+      { offset: 6, mood: "good", text: "Demo entry: Settled into a new routine at college. Feeling optimistic.", happy: "Caught up with an old friend." },
+      { offset: 5, mood: "okay", text: "Demo entry: An average day, nothing remarkable, but steady.", grateful: "A quiet evening to myself." },
+      { offset: 4, mood: "difficult", text: "Demo entry: Overwhelmed by deadlines piling up.", difficult: "Too many things due at once." },
+      { offset: 3, mood: "good", text: "Demo entry: Finished a project I'd been putting off. Relief.", improve: "Start tasks earlier next time." },
+      { offset: 2, mood: "great", text: "Demo entry: Genuinely happy today — small wins added up.", happy: "A good workout and good food." },
+      { offset: 1, mood: "low", text: "Demo entry: Tired and a bit low on motivation.", difficult: "Didn't sleep well." },
+      { offset: 0, mood: "good", text: "Demo entry: Feeling steady heading into the day.", grateful: "Morning coffee and quiet time to plan." },
+    ];
+
+    return demo.map((d, i) => {
+      const date = new Date(now);
+      date.setDate(date.getDate() - d.offset);
+      date.setHours(9 + i, 15, 0, 0);
+      return {
+        id: "demo_" + d.offset,
+        isoDate: date.toISOString(),
+        mood: d.mood,
+        text: d.text,
+        prompts: {
+          happy: d.happy || "",
+          difficult: d.difficult || "",
+          grateful: d.grateful || "",
+          improve: d.improve || "",
+        },
+        demo: true,
+      };
+    });
+  }
+
+  function loadDemoData() {
+    const existingIds = new Set(entries.map((e) => e.id));
+    const demoEntries = buildDemoEntries().filter((d) => !existingIds.has(d.id));
+    entries.push(...demoEntries);
+    persistEntries();
+    renderAll();
+  }
+
+  /* ============================================================
+     Delete all data
+     ============================================================ */
+  function deleteAllData() {
+    entries = [];
+    localStorage.removeItem(ENTRIES_KEY);
+    renderAll();
+  }
+
+  /* ============================================================
+     Breathing exercise
+     ============================================================ */
+  const BREATH_PHASES = [
+    { label: "Breathe in", duration: 4000, cssClass: "state-in" },
+    { label: "Hold", duration: 4000, cssClass: "state-hold" },
+    { label: "Breathe out", duration: 6000, cssClass: "state-out" },
+  ];
+
+  function startBreathing() {
+    if (breathing.running) return;
+    breathing.running = true;
+    breathing.secondsLeft = 60;
+
+    document.getElementById("breathe-start-btn").classList.add("hidden");
+    document.getElementById("breathe-stop-btn").classList.remove("hidden");
+
+    runBreathPhase(0);
+
+    breathing.timer = setInterval(() => {
+      breathing.secondsLeft--;
+      document.getElementById("breathe-timer").textContent = Math.max(breathing.secondsLeft, 0) + "s";
+      if (breathing.secondsLeft <= 0) {
+        stopBreathing(true);
+      }
+    }, 1000);
+  }
+
+  function runBreathPhase(phaseIndex) {
+    if (!breathing.running) return;
+    const phase = BREATH_PHASES[phaseIndex % BREATH_PHASES.length];
+    const circle = document.getElementById("breathe-circle");
+    const instruction = document.getElementById("breathe-instruction");
+
+    circle.classList.remove("state-in", "state-hold", "state-out");
+    // force reflow so the transition re-triggers each phase
+    void circle.offsetWidth;
+    circle.classList.add(phase.cssClass);
+    instruction.textContent = phase.label;
+
+    breathing.cycleTimer = setTimeout(() => {
+      runBreathPhase(phaseIndex + 1);
+    }, phase.duration);
+  }
+
+  function stopBreathing(completed) {
+    breathing.running = false;
+    clearInterval(breathing.timer);
+    clearTimeout(breathing.cycleTimer);
+    breathing.timer = null;
+    breathing.cycleTimer = null;
+
+    const circle = document.getElementById("breathe-circle");
+    circle.classList.remove("state-in", "state-hold", "state-out");
+    document.getElementById("breathe-instruction").textContent = completed ? "Nicely done" : "Ready";
+    document.getElementById("breathe-timer").textContent = "60s";
+    document.getElementById("breathe-start-btn").classList.remove("hidden");
+    document.getElementById("breathe-stop-btn").classList.add("hidden");
+  }
+
+  /* ============================================================
+     Modals
+     ============================================================ */
+  function openModal(id) { document.getElementById(id).classList.remove("hidden"); }
+  function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
+
+  /* ============================================================
+     Master render
+     ============================================================ */
+  function renderAll() {
+    renderEntries();
+    renderMoodView();
+    renderDashboard();
+  }
+
+  /* ============================================================
+     Init
+     ============================================================ */
+  document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+    loadEntries();
+    initMoodPicker();
+
+    document.getElementById("today-date-label").textContent =
+      new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+
+    // Landing
+    document.getElementById("enter-app-btn").addEventListener("click", enterApp);
+    document.getElementById("landing-theme-toggle").addEventListener("click", toggleTheme);
+
+    // Theme toggles (sidebar + mobile)
+    document.getElementById("app-theme-toggle").addEventListener("click", toggleTheme);
+    document.getElementById("mobile-theme-toggle").addEventListener("click", toggleTheme);
+
+    // Nav (sidebar + bottom bar share the .nav-item[data-view] pattern)
+    document.querySelectorAll(".nav-item").forEach((btn) => {
+      btn.addEventListener("click", () => switchView(btn.dataset.view));
+    });
+
+    // Journal
+    document.getElementById("save-entry-btn").addEventListener("click", saveEntry);
+    document.getElementById("dismiss-crisis-btn").addEventListener("click", () => {
+      document.getElementById("crisis-card").classList.add("hidden");
+    });
+
+    const promptsToggle = document.getElementById("prompts-toggle");
+    promptsToggle.addEventListener("click", () => {
+      const panel = document.getElementById("optional-prompts");
+      const isHidden = panel.hasAttribute("hidden");
+      if (isHidden) {
+        panel.removeAttribute("hidden");
+        promptsToggle.setAttribute("aria-expanded", "true");
+        promptsToggle.innerHTML = "<span>− Hide guided prompts</span>";
+      } else {
+        panel.setAttribute("hidden", "");
+        promptsToggle.setAttribute("aria-expanded", "false");
+        promptsToggle.innerHTML = "<span>+ Add guided prompts</span>";
+      }
+    });
+
+    // Dashboard actions
+    document.getElementById("load-demo-btn").addEventListener("click", loadDemoData);
+    document.getElementById("delete-all-btn").addEventListener("click", () => openModal("delete-modal"));
+    document.getElementById("cancel-delete-btn").addEventListener("click", () => closeModal("delete-modal"));
+    document.getElementById("confirm-delete-btn").addEventListener("click", () => {
+      deleteAllData();
+      closeModal("delete-modal");
+    });
+
+    // Privacy modal
+    document.getElementById("privacy-btn").addEventListener("click", () => openModal("privacy-modal"));
+    document.getElementById("close-privacy-btn").addEventListener("click", () => closeModal("privacy-modal"));
+
+    // Close modals on overlay click
+    document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) overlay.classList.add("hidden");
+      });
+    });
+
+    // Breathing
+    document.getElementById("breathe-start-btn").addEventListener("click", startBreathing);
+    document.getElementById("breathe-stop-btn").addEventListener("click", () => stopBreathing(false));
+  });
+})();
+
+</script>
+</body>
+</html>
